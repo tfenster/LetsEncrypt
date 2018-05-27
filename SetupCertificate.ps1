@@ -16,7 +16,7 @@ try {
     Write-Host "Initializing ACMEVault"
     Initialize-ACMEVault
                 
-    Write-Host "Register Contact EMail address and accept Terms Of Service"
+    Write-Host "Registering Contact EMail address and accept Terms Of Service"
     New-ACMERegistration -Contacts "mailto:$ContactEMailForLetsEncrypt" -AcceptTos | Out-Null
                 
     Write-Host "Creating new dns Identifier"
