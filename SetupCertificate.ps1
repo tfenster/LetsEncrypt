@@ -59,4 +59,5 @@ catch {
 finally {
     Write-Host "Remove temp website"
     Remove-WebSite -name http -ErrorAction Ignore
+    Remove-Item -path c:\inetpub\wwwroot\http -Recurse -Force -ErrorAction Ignore
 }
