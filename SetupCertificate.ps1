@@ -1,21 +1,14 @@
 $ContactEMailForLetsEncrypt = $env:ContactEMailForLetsEncrypt
 
 mkdir c:\inetpub\wwwroot\http | Out-Null
-new-website -name http -port 80 -physicalpath c:\inetpub\wwwroot\http
+new-website -name http -port 80 -physicalpath c:\inetpub\wwwroot\http | Out-Null
 
 Write-Host "Installing NuGet PackageProvider"
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -ErrorAction Ignore | Out-Null
 
 Write-Host "Installing ACMESharp PowerShell modules"
-Install-Module -Name ACMESharp -AllowClobber -force
-Install-Module -Name ACMESharp.Providers.IIS -force
-Import-Module ACMESharp
-Enable-ACMEExtensionModule -ModuleName ACMESharp.Providers.IIS
-
-Write-Host "Install modules and dependencies for LetsEncrypt"
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-Install-Module -Name ACMESharp -Force
-Install-Module -Name ACMESharp.Providers.IIS -Force
+Install-Module -Name ACMESharp -AllowClobber -force -ErrorAction Ignore | Out-Null
+Install-Module -Name ACMESharp.Providers.IIS -force -ErrorAction Ignore | Out-Null
 Import-Module ACMESharp
 Enable-ACMEExtensionModule -ModuleName ACMESharp.Providers.IIS
 
