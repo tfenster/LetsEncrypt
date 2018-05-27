@@ -1,7 +1,7 @@
 $ContactEMailForLetsEncrypt = $env:ContactEMailForLetsEncrypt
 
 try {
-    Write-Host "Create temp website for letsEncrypt"
+    Write-Host "Creating temp website for letsEncrypt"
     mkdir c:\inetpub\wwwroot\http -ErrorAction Ignore | Out-Null
     new-website -name http -port 80 -physicalpath c:\inetpub\wwwroot\http -ErrorAction Ignore | Out-Null
 
@@ -57,7 +57,7 @@ catch {
 
 }
 finally {
-    Write-Host "Remove temp website"
+    Write-Host "Removing temp website"
     Remove-WebSite -name http -ErrorAction Ignore
     Remove-Item -path c:\inetpub\wwwroot\http -Recurse -Force -ErrorAction Ignore
 }
