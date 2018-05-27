@@ -1,9 +1,10 @@
 $ContactEMailForLetsEncrypt = $env:ContactEMailForLetsEncrypt
 
 try {
-    mkdir c:\inetpub\wwwroot\http | Out-Null
-    new-website -name http -port 80 -physicalpath c:\inetpub\wwwroot\http | Out-Null
-    
+    Write-Host "Create temp website for letsEncrypt"
+    mkdir c:\inetpub\wwwroot\http -ErrorAction Ignore | Out-Null
+    new-website -name http -port 80 -physicalpath c:\inetpub\wwwroot\http -ErrorAction Ignore | Out-Null
+
     Write-Host "Installing NuGet PackageProvider"
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -ErrorAction Ignore | Out-Null
     
@@ -53,4 +54,9 @@ catch {
     # If Any error occurs (f.ex. rate-limits), setup self signed certificate
     Write-Host "Error creating letsEncrypt certificate, reverting to self-signed"
     . (Join-Path $runPath $MyInvocation.MyCommand.Name)
+
+}
+finally {
+    Write-Host "Remove temp website"
+    Remove-WebSite -name http -ErrorAction Ignore
 }
