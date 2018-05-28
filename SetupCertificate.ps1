@@ -11,11 +11,11 @@
 #     $dnsIdentity
 
 $ContactEMailForLetsEncrypt = "$env:ContactEMailForLetsEncrypt"
-$CertificatePfxPassword = "$env:CerificatePfxPassword"
-$certificatePfxUrl = "$env:CerificatePfxUrl"
+$CertificatePfxPassword = "$env:CertificatePfxPassword"
+$certificatePfxUrl = "$env:certificatePfxUrl"
 $certificatePfxFile = ""
 
-if ("$certificatePfxUrl" -ne "" -and "$certificatePfxPassword" -ne "") {
+if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
 
     $certificatePfxFile = Join-Path $myPath "certificate.pfx"
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
