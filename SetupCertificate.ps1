@@ -39,15 +39,15 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         Write-Host "Using LetsEncrypt to create SSL Certificate"
 
         Write-Host "Creating temp website for letsEncrypt"
-        mkdir c:\inetpub\wwwroot\eighty -ErrorAction Ignore | Out-Null
-        new-website -name http -port 80 -physicalpath c:\inetpub\wwwroot\eighty -ErrorAction Ignore | Out-Null
-    
+        mkdir c:\inetpub\wwwroot\eighty 
+        new-website -name http -port 80 -physicalpath c:\inetpub\wwwroot\eighty 
+        
         Write-Host "Installing NuGet PackageProvider"
-        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -ErrorAction Ignore | Out-Null
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force 
         
         Write-Host "Installing ACMESharp PowerShell modules"
-        Install-Module -Name ACMESharp -AllowClobber -force -ErrorAction Ignore | Out-Null
-        Install-Module -Name ACMESharp.Providers.IIS -force -ErrorAction Ignore | Out-Null
+        Install-Module -Name ACMESharp -AllowClobber -force 
+        Install-Module -Name ACMESharp.Providers.IIS -force 
         Import-Module ACMESharp
         Enable-ACMEExtensionModule -ModuleName ACMESharp.Providers.IIS | Out-Null
         Write-Host "Initializing ACMEVault"
@@ -76,7 +76,7 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         Get-ACMECertificate -CertificateRef $certAlias -ExportPkcs12 $certificatePfxFile -CertificatePassword $certificatePfxPassword | Out-Null
         
         $certificatePemFile = Join-Path $myPath "certificate.pem"
-        Remove-Item -Path $certificatePemFile -Force -ErrorAction Ignore | Out-Null
+        Remove-Item -Path $certificatePemFile -Force 
         Get-ACMECertificate -CertificateRef $certAlias -ExportKeyPEM $certificatePemFile | Out-Null
         
         $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificatePfxFile, $certificatePfxPassword)
