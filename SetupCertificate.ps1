@@ -61,7 +61,7 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         New-ACMEIdentifier -Dns $publicDnsName -Alias $dnsAlias | Out-Null
         
         Write-Host "Performing Lets Encrypt challenge to default web site"
-        Complete-ACMEChallenge -IdentifierRef $dnsAlias -ChallengeType http-01 -Handler iis -HandlerParameters @{ WebSiteRef = 'http' } | Out-Null
+        Complete-ACMEChallenge -IdentifierRef $dnsAlias -ChallengeType http-01 -Handler iis -HandlerParameters @{ WebSiteRef = 'eighty' } | Out-Null
         Submit-ACMEChallenge -IdentifierRef $dnsAlias -ChallengeType http-01 | Out-Null
         sleep -s 60
         Update-ACMEIdentifier -IdentifierRef $dnsAlias | Out-Null
