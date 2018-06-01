@@ -38,14 +38,7 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
     try {
         Write-Host "Using LetsEncrypt to create SSL Certificate"
 
-        Write-Host "Creating temp website for letsEncrypt"
-        mkdir c:\inetpub\wwwroot\eighty 
-        new-website -name eighty -port 80 -physicalpath c:\inetpub\wwwroot\eighty 
-        
-        while($true)
-        {
-            sleep -s 60
-        }
+        Write-Host "Using default website for letsEncrypt"
         
         Write-Host "Installing NuGet PackageProvider"
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force 
@@ -66,9 +59,9 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         New-ACMEIdentifier -Dns $publicDnsName -Alias $dnsAlias | Out-Null
         
         Write-Host "Performing Lets Encrypt challenge to default web site"
-        Complete-ACMEChallenge -IdentifierRef $dnsAlias -ChallengeType http-01 -Handler iis -HandlerParameters @{ WebSiteRef = 'eighty' } | Out-Null
+        Complete-ACMEChallenge -IdentifierRef $dnsAlias -ChallengeType http-01 -Handler iis -HandlerParameters @{ WebSiteRef = 'Default Web Site' } | Out-Null
         Submit-ACMEChallenge -IdentifierRef $dnsAlias -ChallengeType http-01 | Out-Null
-        sleep -s 60
+        sleep -s 10
         Update-ACMEIdentifier -IdentifierRef $dnsAlias | Out-Null
         
         Write-Host "Requesting certificate"
