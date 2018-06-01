@@ -38,14 +38,14 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
     try {
         Write-Host "Using LetsEncrypt to create SSL Certificate"
 
-        Write-Host "Using default website for letsEncrypt"
+        Write-Host "Using default website for LetsEncrypt"
         
         Write-Host "Installing NuGet PackageProvider"
-        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force 
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force | Out-Null
         
         Write-Host "Installing ACMESharp PowerShell modules"
-        Install-Module -Name ACMESharp -AllowClobber -force 
-        Install-Module -Name ACMESharp.Providers.IIS -force 
+        Install-Module -Name ACMESharp -AllowClobber -force | Out-Null
+        Install-Module -Name ACMESharp.Providers.IIS -force | Out-Null
         Import-Module ACMESharp
         Enable-ACMEExtensionModule -ModuleName ACMESharp.Providers.IIS | Out-Null
         Write-Host "Initializing ACMEVault"
@@ -61,7 +61,7 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         Write-Host "Performing Lets Encrypt challenge to default web site"
         Complete-ACMEChallenge -IdentifierRef $dnsAlias -ChallengeType http-01 -Handler iis -HandlerParameters @{ WebSiteRef = 'Default Web Site' } | Out-Null
         Submit-ACMEChallenge -IdentifierRef $dnsAlias -ChallengeType http-01 | Out-Null
-        sleep -s 10
+        sleep -s 60
         Update-ACMEIdentifier -IdentifierRef $dnsAlias | Out-Null
         
         Write-Host "Requesting certificate"
@@ -74,7 +74,7 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         Get-ACMECertificate -CertificateRef $certAlias -ExportPkcs12 $certificatePfxFile -CertificatePassword $certificatePfxPassword | Out-Null
         
         $certificatePemFile = Join-Path $myPath "certificate.pem"
-        Remove-Item -Path $certificatePemFile -Force 
+        Remove-Item -Path $certificatePemFile -Force -ErrorAction Ignore | Out-Null
         Get-ACMECertificate -CertificateRef $certAlias -ExportKeyPEM $certificatePemFile | Out-Null
         
         $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificatePfxFile, $certificatePfxPassword)
@@ -92,11 +92,6 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         Write-Host "Error was:"
         Write-Host $_.Exception.Message
         . (Join-Path $runPath $MyInvocation.MyCommand.Name)
-    }
-    finally {
-        #Write-Host "Removing temp website"
-        #Remove-WebSite -name eighty -ErrorAction Ignore
-        #Remove-Item -path c:\inetpub\wwwroot\eighty -Recurse -Force -ErrorAction Ignore
     }
 } else {
     . (Join-Path $runPath $MyInvocation.MyCommand.Name)
