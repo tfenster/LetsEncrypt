@@ -42,6 +42,11 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         mkdir c:\inetpub\wwwroot\eighty 
         new-website -name eighty -port 80 -physicalpath c:\inetpub\wwwroot\eighty 
         
+        while($true)
+        {
+            sleep -s 60
+        }
+        
         Write-Host "Installing NuGet PackageProvider"
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force 
         
