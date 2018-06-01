@@ -40,7 +40,7 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
 
         Write-Host "Creating temp website for letsEncrypt"
         mkdir c:\inetpub\wwwroot\eighty 
-        new-website -name http -port 80 -physicalpath c:\inetpub\wwwroot\eighty 
+        new-website -name eighty -port 80 -physicalpath c:\inetpub\wwwroot\eighty 
         
         Write-Host "Installing NuGet PackageProvider"
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force 
@@ -97,7 +97,7 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
     }
     finally {
         #Write-Host "Removing temp website"
-        #Remove-WebSite -name http -ErrorAction Ignore
+        #Remove-WebSite -name eighty -ErrorAction Ignore
         #Remove-Item -path c:\inetpub\wwwroot\eighty -Recurse -Force -ErrorAction Ignore
     }
 } else {
