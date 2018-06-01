@@ -96,9 +96,9 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         . (Join-Path $runPath $MyInvocation.MyCommand.Name)
     }
     finally {
-        Write-Host "Removing temp website"
-        Remove-WebSite -name http -ErrorAction Ignore
-        Remove-Item -path c:\inetpub\wwwroot\eighty -Recurse -Force -ErrorAction Ignore
+        #Write-Host "Removing temp website"
+        #Remove-WebSite -name http -ErrorAction Ignore
+        #Remove-Item -path c:\inetpub\wwwroot\eighty -Recurse -Force -ErrorAction Ignore
     }
 } else {
     . (Join-Path $runPath $MyInvocation.MyCommand.Name)
