@@ -80,6 +80,9 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificatePfxFile, $certificatePfxPassword)
         $certificateThumbprint = $cert.Thumbprint
         
+        Write-Host "Importing Certificate to LocalMachine\my"
+        Import-PfxCertificate -FilePath $certificatePfxFile -CertStoreLocation cert:\localMachine\my -Password (ConvertTo-SecureString -String $certificatePfxPassword -AsPlainText -Force) | Out-Null
+        
         $dnsidentity = $cert.GetNameInfo("SimpleName",$false)
         if ($dnsidentity.StartsWith("*")) {
             $dnsidentity = $dnsidentity.Substring($dnsidentity.IndexOf(".")+1)
