@@ -38,16 +38,14 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
     try {
         Write-Host "Using LetsEncrypt to create SSL Certificate"
 
-        Write-Host "Creating temp website for letsEncrypt"
-        mkdir c:\inetpub\wwwroot\http -ErrorAction Ignore | Out-Null
-        new-website -name http -port 80 -physicalpath c:\inetpub\wwwroot\http -ErrorAction Ignore | Out-Null
-    
+        Write-Host "Using default website for LetsEncrypt"
+        
         Write-Host "Installing NuGet PackageProvider"
-        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -ErrorAction Ignore | Out-Null
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force | Out-Null
         
         Write-Host "Installing ACMESharp PowerShell modules"
-        Install-Module -Name ACMESharp -AllowClobber -force -ErrorAction Ignore | Out-Null
-        Install-Module -Name ACMESharp.Providers.IIS -force -ErrorAction Ignore | Out-Null
+        Install-Module -Name ACMESharp -AllowClobber -force | Out-Null
+        Install-Module -Name ACMESharp.Providers.IIS -force | Out-Null
         Import-Module ACMESharp
         Enable-ACMEExtensionModule -ModuleName ACMESharp.Providers.IIS | Out-Null
         Write-Host "Initializing ACMEVault"
@@ -61,7 +59,7 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         New-ACMEIdentifier -Dns $publicDnsName -Alias $dnsAlias | Out-Null
         
         Write-Host "Performing Lets Encrypt challenge to default web site"
-        Complete-ACMEChallenge -IdentifierRef $dnsAlias -ChallengeType http-01 -Handler iis -HandlerParameters @{ WebSiteRef = 'http' } | Out-Null
+        Complete-ACMEChallenge -IdentifierRef $dnsAlias -ChallengeType http-01 -Handler iis -HandlerParameters @{ WebSiteRef = 'Default Web Site' } | Out-Null
         Submit-ACMEChallenge -IdentifierRef $dnsAlias -ChallengeType http-01 | Out-Null
         sleep -s 60
         Update-ACMEIdentifier -IdentifierRef $dnsAlias | Out-Null
@@ -82,6 +80,9 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificatePfxFile, $certificatePfxPassword)
         $certificateThumbprint = $cert.Thumbprint
         
+        Write-Host "Importing Certificate to LocalMachine\my"
+        Import-PfxCertificate -FilePath $certificatePfxFile -CertStoreLocation cert:\localMachine\my -Password (ConvertTo-SecureString -String $certificatePfxPassword -AsPlainText -Force) | Out-Null
+        
         $dnsidentity = $cert.GetNameInfo("SimpleName",$false)
         if ($dnsidentity.StartsWith("*")) {
             $dnsidentity = $dnsidentity.Substring($dnsidentity.IndexOf(".")+1)
@@ -91,12 +92,9 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
     catch {
         # If Any error occurs (f.ex. rate-limits), setup self signed certificate
         Write-Host "Error creating letsEncrypt certificate, reverting to self-signed"
+        Write-Host "Error was:"
+        Write-Host $_.Exception.Message
         . (Join-Path $runPath $MyInvocation.MyCommand.Name)
-    }
-    finally {
-        Write-Host "Removing temp website"
-        Remove-WebSite -name http -ErrorAction Ignore
-        Remove-Item -path c:\inetpub\wwwroot\http -Recurse -Force -ErrorAction Ignore
     }
 } else {
     . (Join-Path $runPath $MyInvocation.MyCommand.Name)
