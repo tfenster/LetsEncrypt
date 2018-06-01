@@ -39,8 +39,8 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
         Write-Host "Using LetsEncrypt to create SSL Certificate"
 
         Write-Host "Creating temp website for letsEncrypt"
-        mkdir c:\inetpub\wwwroot\http -ErrorAction Ignore | Out-Null
-        new-website -name http -port 80 -physicalpath c:\inetpub\wwwroot\http -ErrorAction Ignore | Out-Null
+        mkdir c:\inetpub\wwwroot\eighty -ErrorAction Ignore | Out-Null
+        new-website -name http -port 80 -physicalpath c:\inetpub\wwwroot\eighty -ErrorAction Ignore | Out-Null
     
         Write-Host "Installing NuGet PackageProvider"
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -ErrorAction Ignore | Out-Null
@@ -98,7 +98,7 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
     finally {
         Write-Host "Removing temp website"
         Remove-WebSite -name http -ErrorAction Ignore
-        Remove-Item -path c:\inetpub\wwwroot\http -Recurse -Force -ErrorAction Ignore
+        Remove-Item -path c:\inetpub\wwwroot\eighty -Recurse -Force -ErrorAction Ignore
     }
 } else {
     . (Join-Path $runPath $MyInvocation.MyCommand.Name)
