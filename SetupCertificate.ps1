@@ -91,6 +91,8 @@ if ("$certificatePfxUrl" -ne "" -and "$CertificatePfxPassword" -ne "") {
     catch {
         # If Any error occurs (f.ex. rate-limits), setup self signed certificate
         Write-Host "Error creating letsEncrypt certificate, reverting to self-signed"
+        Write-Host "Error was:"
+        Write-Host $_.Exception.Message
         . (Join-Path $runPath $MyInvocation.MyCommand.Name)
     }
     finally {
